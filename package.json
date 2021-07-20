@@ -8,6 +8,7 @@
     "serverstart": "DEBUG=express-locallibrary-tutorial:* npm run devstart"
   },
   "dependencies": {
+    "@prettier/plugin-pug": "^1.16.1",
     "async": "^3.2.0",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
@@ -15,8 +16,10 @@
     "express": "~4.16.1",
     "hbs": "~4.0.4",
     "http-errors": "~1.6.3",
+    "luxon": "^2.0.1",
     "mongoose": "^5.13.2",
     "morgan": "~1.9.1",
+    "prettier": "^2.3.2",
     "pug": "^3.0.2"
   },
   "devDependencies": {
