@@ -195,13 +195,74 @@ exports.book_create_post = [
 ];
 
 // Display book delete form on GET.
-exports.book_delete_get = function (req, res) {
-  res.send('NOT IMPLEMENTED: Book delete GET');
+exports.book_delete_get = function (req, res, next) {
+  async.parallel(
+    {
+      book: function (callback) {
+        Book.findById(req.params.id).exec(callback);
+      },
+      book_instance: function (callback) {
+        BookInstance.find({ book: req.params.id }).exec(callback);
+      },
+    },
+    function (err, results) {
+      // Error in API usage
+      if (err) {
+        return next(err);
+      }
+      // No results
+      if (results.book == null) {
+        var err = new Error('Book not found');
+        err.status = 404;
+        return next(err);
+      }
+      // Successful, so render
+      res.render('book_delete', {
+        title: 'Delete Book',
+        book: results.book,
+        book_instances: results.book_instance,
+      });
+    }
+  );
 };
 
 // Handle book delete on POST.
-exports.book_delete_post = function (req, res) {
-  res.send('NOT IMPLEMENTED: Book delete POST');
+exports.book_delete_post = function (req, res, next) {
+  async.parallel(
+    {
+      book: function (callback) {
+        Book.findById(req.params.id).exec(callback);
+      },
+      book_instance: function (callback) {
+        BookInstance.find({ book: req.params.id }).exec(callback);
+      },
+    },
+    function (err, results) {
+      // Error in API usage
+      if (err) {
+        return next(err);
+      }
+      // Success
+      // Book has book instances. Render in same way as GET route.
+      if (results.book_instance.length > 0) {
+        res.render('book_delete', {
+          title: 'Delete Book',
+          book: results.book,
+          book_instances: results.book_instance,
+        });
+        return;
+      } else {
+        // Book has no book instances. Delete object and redirect to list of books.
+        Book.findByIdAndDelete(req.body.bookid, function deleteBook(err) {
+          if (err) {
+            return next(err);
+          }
+          // On Success - go to book list
+          res.redirect('/catalog/books');
+        });
+      }
+    }
+  );
 };
 
 // Display book update form on GET.
