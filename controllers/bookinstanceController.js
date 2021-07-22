@@ -1,6 +1,7 @@
 var BookInstance = require('../models/bookinstance');
 const { body, validationResult } = require('express-validator');
 var Book = require('../models/book');
+var async = require('async');
 
 // Display list of all BookInstances.
 exports.bookinstance_list = function (req, res, next) {
@@ -111,13 +112,60 @@ exports.bookinstance_create_post = [
 ];
 
 // Display BookInstance delete form on GET.
-exports.bookinstance_delete_get = function (req, res) {
-  res.send('NOT IMPLEMENTED: BookInstance delete GET');
+exports.bookinstance_delete_get = function (req, res, next) {
+  async.parallel(
+    {
+      book_instance: function (callback) {
+        BookInstance.findById(req.params.id).exec(callback);
+      },
+    },
+    function (err, results) {
+      // Error in API usage
+      if (err) {
+        return next(err);
+      }
+
+      // No results
+      if (results.book_instance == null) {
+        var err = new Error('Bookinstance not found');
+        err.status = 404;
+        return next(err);
+      }
+
+      // On success, render.
+      res.render('bookinstance_delete', {
+        title: 'Delete Book Instance',
+        book_instance: results.book_instance,
+      });
+    }
+  );
 };
 
 // Handle BookInstance delete on POST.
-exports.bookinstance_delete_post = function (req, res) {
-  res.send('NOT IMPLEMENTED: BookInstance delete POST');
+exports.bookinstance_delete_post = function (req, res, next) {
+  async.parallel(
+    {
+      book_instance: function (callback) {
+        BookInstance.findById(req.params.id).exec(callback);
+      },
+    },
+    function (err, results) {
+      // Error in API usage
+      if (err) {
+        return next(err);
+      }
+      BookInstance.findByIdAndRemove(
+        req.body.bookinstanceid,
+        function deleteBookInstance(err) {
+          if (err) {
+            return next(err);
+          }
+          // Success - redirect to genre list
+          res.redirect('/catalog/bookinstances');
+        }
+      );
+    }
+  );
 };
 
 // Display BookInstance update form on GET.
