@@ -124,7 +124,7 @@ exports.genre_delete_get = function (req, res, next) {
         err.status = 404;
         return next(err);
       }
-      // Succesful, so render.
+      // Successful, so render.
       res.render('genre_delete', {
         title: 'Delete Genre',
         genre: results.genre,
