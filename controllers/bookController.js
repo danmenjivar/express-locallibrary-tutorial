@@ -333,7 +333,7 @@ exports.book_update_post = [
     next();
   },
 
-  // Validate and sanitise fields.
+  // Validate and sanitize fields.
   body('title', 'Title must not be empty.')
     .trim()
     .isLength({ min: 1 })
