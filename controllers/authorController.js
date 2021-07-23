@@ -72,7 +72,10 @@ exports.author_create_post = [
     .withMessage('Family name must be specified.')
     .isAlphanumeric()
     .withMessage('Family name has non-alphanumeric characters.'),
-  body('date_of_birth', 'Invalid date of birth').isISO8601().toDate(),
+  body('date_of_birth', 'Invalid date of birth')
+    .optional({ checkFalsy: true })
+    .isISO8601()
+    .toDate(),
   body('date_of_death', 'Invalid date of death')
     .optional({ checkFalsy: true })
     .isISO8601()
